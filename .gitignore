@@ -45,3 +45,4 @@ msbuild.wrn
 rabbitmq
 HealthMonitoring/appsettings.Development.json
 env*
+HealthMonitoring/log*

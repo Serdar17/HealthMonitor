@@ -28,7 +28,7 @@ public class RamMonitor : IRamMonitor
     public async Task Check()
     {
         var memoryPercentage = GetFreeMemoryPercentage();
-        var message = $"Процент свободной оперативной памяти: \'{memoryPercentage}\'";
+        var message = $"На ВМ: \'{_monitoringSettings.MachineName}\', процент свободной RAM: \'{memoryPercentage}%\'";
         await SendNotification(message);
     }
 
