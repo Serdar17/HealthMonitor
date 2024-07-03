@@ -27,12 +27,15 @@ public class RamMonitor : IRamMonitor
 
     public async Task Check()
     {
-        var memoryPercentage = GetFreeMemoryPercentage();
-        var message = $"На ВМ: \'{_monitoringSettings.MachineName}\', процент свободной RAM: \'{memoryPercentage}%\'";
-        await SendNotification(message);
+        var freeMemoryPercentage = GetFreeMemoryPercentage();
+        if (freeMemoryPercentage < _monitoringSettings.RamMemoryThresholdInPercent)
+        {
+            var message = $"На ВМ: \'{_monitoringSettings.MachineName}\', процент свободной RAM: \'{freeMemoryPercentage}%\'";
+            await SendNotification(message);
+        }
     }
 
-    private static float GetFreeMemoryPercentage()
+    private float GetFreeMemoryPercentage()
     {
         var psi = new ProcessStartInfo
         {
@@ -50,6 +53,7 @@ public class RamMonitor : IRamMonitor
         var totalMemory = float.Parse(memoryInfo[1]);
         var usedMemory = float.Parse(memoryInfo[2]);
         var freeMemoryPercentage = ((totalMemory - usedMemory) / totalMemory) * 100;
+        _logger.LogInformation($"TotalRAMMemory: {totalMemory}, UsedRAMMemory: {usedMemory}, FreeRamMemoryPercent: {freeMemoryPercentage}");
         return freeMemoryPercentage;
     }
     

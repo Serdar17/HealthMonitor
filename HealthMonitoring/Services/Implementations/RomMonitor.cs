@@ -26,9 +26,12 @@ public class RomMonitor : IRomMonitor
 
     public async Task Check()
     {
-        var memoryPercentage = GetFreeMemoryPercentage();
-        var message = $"На ВМ: \'{_monitoringSettings.MachineName}\', процент свободной ROM: \'{memoryPercentage}%\'";
-        await SendNotification(message);
+        var freeMemoryPercentage = GetFreeMemoryPercentage();
+        if (freeMemoryPercentage < _monitoringSettings.RomMemoryThresholdInPercent)
+        {
+            var message = $"На ВМ: \'{_monitoringSettings.MachineName}\', процент свободной ROM: \'{freeMemoryPercentage}%\'";
+            await SendNotification(message);
+        }
     }
 
     private float GetFreeMemoryPercentage()
@@ -49,6 +52,8 @@ public class RomMonitor : IRomMonitor
         percentUsed = percentUsed.TrimEnd('%');
         var usedDiskPercentage = float.Parse(percentUsed);
         var freeDiskPercentage = 100 - usedDiskPercentage;
+        _logger.LogInformation($"FreeDiskPercentage: {freeDiskPercentage}");
+
         return freeDiskPercentage;
     }
 
