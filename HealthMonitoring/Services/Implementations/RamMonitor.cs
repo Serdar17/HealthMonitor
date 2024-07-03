@@ -12,11 +12,14 @@ public class RamMonitor : IRamMonitor
 {
     private readonly TelegramSettings _settings;
     private readonly ITelegramHttpClientContext _context;
+    private readonly ILogger<RamMonitor> _logger;
     private const int MemoryThreshold = 20; 
     
-    public RamMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshot)
+    public RamMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshot,
+        ILogger<RamMonitor> logger)
     {
         _context = context;
+        _logger = logger;
         _settings = optionsSnapshot.Value;
     }
 
@@ -53,6 +56,7 @@ public class RamMonitor : IRamMonitor
     
     private async Task SendNotification(string message)
     {
+        _logger.LogInformation($"{message}");
         var dto = new SendNotificationRequest(_settings.ChatId, message);
         await _context.RunEndpoint(new PostSendNotificationEndpoint(dto));
     }

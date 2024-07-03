@@ -12,11 +12,14 @@ public class RomMonitor : IRomMonitor
 {
     private readonly ITelegramHttpClientContext _context;
     private readonly TelegramSettings _settings;
+    private readonly ILogger<RomMonitor> _logger;
     private const int MemoryThreshold = 5; 
 
-    public RomMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshot)
+    public RomMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshot, 
+        ILogger<RomMonitor> logger)
     {
         _context = context;
+        _logger = logger;
         _settings = optionsSnapshot.Value;
         
     }
@@ -52,6 +55,7 @@ public class RomMonitor : IRomMonitor
 
     private async Task SendNotification(string message)
     {
+        _logger.LogInformation($"{message}");
         var dto = new SendNotificationRequest(_settings.ChatId, message);
         await _context.RunEndpoint(new PostSendNotificationEndpoint(dto));
     }
