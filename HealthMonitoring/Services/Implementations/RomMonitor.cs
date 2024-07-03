@@ -11,17 +11,17 @@ namespace HealthMonitoring.Services.Implementations;
 public class RomMonitor : IRomMonitor
 {
     private readonly ITelegramHttpClientContext _context;
-    private readonly TelegramSettings _settings;
+    private readonly TelegramSettings _telegramSettings;
+    private readonly MonitoringSettings _monitoringSettings;
     private readonly ILogger<RomMonitor> _logger;
-    private const int MemoryThreshold = 5; 
 
-    public RomMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshot, 
-        ILogger<RomMonitor> logger)
+    public RomMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshotTelegram,
+        IOptionsSnapshot<MonitoringSettings> optionsSnapshotMonitoring, ILogger<RomMonitor> logger)
     {
         _context = context;
         _logger = logger;
-        _settings = optionsSnapshot.Value;
-        
+        _telegramSettings = optionsSnapshotTelegram.Value;
+        _monitoringSettings = optionsSnapshotMonitoring.Value;
     }
 
     public async Task Check()
@@ -56,7 +56,7 @@ public class RomMonitor : IRomMonitor
     private async Task SendNotification(string message)
     {
         _logger.LogInformation($"{message}");
-        var dto = new SendNotificationRequest(_settings.ChatId, message);
+        var dto = new SendNotificationRequest(_telegramSettings.ChatId, message);
         await _context.RunEndpoint(new PostSendNotificationEndpoint(dto));
     }
 }
