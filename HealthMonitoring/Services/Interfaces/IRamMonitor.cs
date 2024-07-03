@@ -2,5 +2,5 @@
 
 public interface IRamMonitor
 {
-    Task Check();
+    Task CheckRam();
 }

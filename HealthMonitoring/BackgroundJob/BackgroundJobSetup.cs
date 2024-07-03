@@ -5,11 +5,10 @@ namespace HealthMonitoring.BackgroundJob;
 
 public class BackgroundJobSetup : IConfigureOptions<QuartzOptions>
 {
-    private static readonly TimeSpan TimeInMinutes = TimeSpan.FromMinutes(2);
+    private static readonly TimeSpan TimeInMinutes = TimeSpan.FromMinutes(1);
     
     public void Configure(QuartzOptions options)
     {
-        var a = TimeInMinutes.Minutes;
         var jobKey = JobKey.Create(nameof(BackgroundJob));
 
         options

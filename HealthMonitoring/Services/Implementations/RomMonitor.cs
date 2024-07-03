@@ -3,28 +3,26 @@ using HealthMonitoring.Network.Dtos;
 using HealthMonitoring.Network.Endpoints.Telegram;
 using HealthMonitoring.Network.HttpContexts.Telegram;
 using HealthMonitoring.Options;
-using HealthMonitoring.Services.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace HealthMonitoring.Services.Implementations;
 
-public class RomMonitor : IRomMonitor
+public class RomMonitor : MemoryMonitor
 {
-    private readonly ITelegramHttpClientContext _context;
-    private readonly TelegramSettings _telegramSettings;
     private readonly MonitoringSettings _monitoringSettings;
     private readonly ILogger<RomMonitor> _logger;
 
-    public RomMonitor(ITelegramHttpClientContext context, IOptionsSnapshot<TelegramSettings> optionsSnapshotTelegram,
-        IOptionsSnapshot<MonitoringSettings> optionsSnapshotMonitoring, ILogger<RomMonitor> logger)
+    public RomMonitor(
+        ITelegramHttpClientContext context, 
+        IOptionsSnapshot<TelegramSettings> optionsSnapshotTelegram,
+        IOptionsSnapshot<MonitoringSettings> optionsSnapshotMonitoring, 
+        ILogger<RomMonitor> logger) : base(optionsSnapshotTelegram, context, logger)
     {
-        _context = context;
         _logger = logger;
-        _telegramSettings = optionsSnapshotTelegram.Value;
         _monitoringSettings = optionsSnapshotMonitoring.Value;
     }
 
-    public async Task Check()
+    public override async Task CheckRom()
     {
         var freeMemoryPercentage = GetFreeMemoryPercentage();
         if (freeMemoryPercentage < _monitoringSettings.RomMemoryThresholdInPercent)
@@ -55,12 +53,5 @@ public class RomMonitor : IRomMonitor
         _logger.LogInformation($"FreeDiskPercentage: {freeDiskPercentage}");
 
         return freeDiskPercentage;
-    }
-
-    private async Task SendNotification(string message)
-    {
-        _logger.LogInformation($"{message}");
-        var dto = new SendNotificationRequest(_telegramSettings.ChatId, message);
-        await _context.RunEndpoint(new PostSendNotificationEndpoint(dto));
     }
 }

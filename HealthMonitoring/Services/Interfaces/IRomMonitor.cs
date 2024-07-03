@@ -2,5 +2,5 @@
 
 public interface IRomMonitor
 {
-    Task Check();
+    Task CheckRom();
 }

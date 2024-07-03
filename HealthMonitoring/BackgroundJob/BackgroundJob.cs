@@ -21,8 +21,8 @@ public class BackgroundJob : IJob
         var ramMonitor = scope.ServiceProvider.GetService<IRamMonitor>();
         var romMonitor = scope.ServiceProvider.GetService<IRomMonitor>();
         
-        await ramMonitor!.Check();
-        await romMonitor!.Check();
+        await ramMonitor!.CheckRam();
+        await romMonitor!.CheckRom();
         
         _logger.LogInformation("background working ended at {EndTime}", DateTime.Now);
     }
