@@ -9,6 +9,7 @@ public class BackgroundJobSetup : IConfigureOptions<QuartzOptions>
     
     public void Configure(QuartzOptions options)
     {
+        var a = TimeInMinutes.Minutes;
         var jobKey = JobKey.Create(nameof(BackgroundJob));
 
         options
@@ -16,6 +17,6 @@ public class BackgroundJobSetup : IConfigureOptions<QuartzOptions>
             .AddTrigger(trigger =>
                 trigger
                     .ForJob(jobKey)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(TimeInMinutes.Minutes)));
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(TimeInMinutes.Minutes).RepeatForever()));
     }
 }

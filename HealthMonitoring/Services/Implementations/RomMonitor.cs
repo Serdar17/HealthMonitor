@@ -27,7 +27,6 @@ public class RomMonitor : IRomMonitor
     public async Task Check()
     {
         var memoryPercentage = GetFreeMemoryPercentage();
-        Console.WriteLine(memoryPercentage);
         var message = $"Процент свободной постоянной памяти: \'{memoryPercentage}\'";
         await SendNotification(message);
     }
